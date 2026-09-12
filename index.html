@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ELAN AI</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#07111f;color:white;font-family:Arial,sans-serif;
+ min-height:100vh;display:flex;justify-content:center
+}
+.app{width:100%;max-width:500px;padding:22px 16px}
+h1{text-align:center;font-size:36px;margin:8px}
+.sub{text-align:center;color:#9eb0c8;margin-bottom:20px}
+.avatar{
+ width:210px;height:210px;margin:15px auto 20px;border-radius:50%;
+ background:linear-gradient(145deg,#203b5d,#091522);
+ display:flex;align-items:center;justify-content:center;
+ box-shadow:0 0 35px #284f76;animation:float 3s infinite ease-in-out
+}
+.face{
+ width:125px;height:145px;background:#d9a27f;border-radius:48%;
+ position:relative
+}
+.hair{
+ position:absolute;top:-14px;left:-3px;width:131px;height:75px;
+ background:#151515;border-radius:65px 65px 25px 25px
+}
+.glasses{
+ position:absolute;top:51px;left:9px;width:107px;
+ display:flex;justify-content:space-between
+}
+.glass{width:48px;height:30px;border:4px solid white;border-radius:12px}
+.eyes{
+ position:absolute;top:63px;left:28px;width:70px;
+ display:flex;justify-content:space-between
+}
+.eye{
+ width:8px;height:8px;background:#111;border-radius:50%;
+ animation:blink 4s infinite
+}
+.mouth{
+ position:absolute;top:106px;left:47px;width:31px;height:7px;
+ background:#351d20;border-radius:50%
+}
+.speaking .mouth{animation:talk .18s infinite alternate}
+.suit{
+ position:absolute;bottom:-18px;width:125px;height:65px;
+ background:#090909;border-radius:25px 25px 10px 10px;z-index:-1
+}
+.status{text-align:center;color:#9eb0c8;margin:10px}
+.chat{
+ height:230px;overflow:auto;padding:12px;
+ background:#101c2a;border-radius:18px;margin-bottom:12px
+}
+.msg{padding:10px 12px;margin:7px 0;border-radius:12px;line-height:1.4}
+.me{background:#21476d;text-align:right}
+.elan{background:#1a2938}
+.controls{display:flex;gap:8px}
+input{
+ flex:1;min-width:0;padding:14px;border:0;border-radius:14px;
+ background:#162536;color:white;font-size:16px;outline:none
+}
+button{
+ border:0;border-radius:14px;padding:12px 15px;
+ background:#356894;color:white;font-weight:bold
+}
+.mic{font-size:20px}
+@keyframes float{50%{transform:translateY(-8px)}}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+@keyframes talk{to{height:20px;width:36px}}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<h1>ELAN</h1>
+<div class="sub">Your Personal AI Assistant</div>
+
+<div class="avatar" id="avatar">
+ <div class="face">
+  <div class="hair"></div>
+  <div class="glasses">
+   <div class="glass"></div>
+   <div class="glass"></div>
+  </div>
+  <div class="eyes">
+   <div class="eye"></div>
+   <div class="eye"></div>
+  </div>
+  <div class="mouth"></div>
+ </div>
+ <div class="suit"></div>
+</div>
+
+<div class="status" id="status">ELAN is ready</div>
+
+<div class="chat" id="chat">
+ <div class="msg elan">
+  Hello! 👋 Main ELAN hoon.<br>
+  Mujhse baat karo ya 🎙️ button dabao.
+ </div>
+</div>
+
+<div class="controls">
+ <input id="input" placeholder="ELAN se baat karo...">
+ <button onclick="send()">Send</button>
+ <button class="mic" onclick="listen()">🎙️</button>
+</div>
+
+</div>
+
+<script>
+const input=document.getElementById("input");
+const chat=document.getElementById("chat");
+const avatar=document.getElementById("avatar");
+const status=document.getElementById("status");
+
+function message(text,who){
+ const d=document.createElement("div");
+ d.className="msg "+who;
+ d.textContent=text;
+ chat.appendChild(d);
+ chat.scrollTop=chat.scrollHeight;
+}
+
+function speak(text){
+ if(!("speechSynthesis" in window))return;
+ speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(text);
+ u.rate=1;
+ u.onstart=()=>{avatar.classList.add("speaking");status.textContent="ELAN is speaking..."}
+ u.onend=()=>{avatar.classList.remove("speaking");status.textContent="ELAN is ready"}
+ speechSynthesis.speak(u);
+}
+
+function reply(text){
+ const t=text.toLowerCase();
+
+ if(t.includes("hello")||t.includes("hi")||t.includes("salam"))
+  return "Hello! Main ELAN hoon. Tum mujhse baat kar sakte ho.";
+
+ if(t.includes("naam")||t.includes("name"))
+  return "Mera naam ELAN hai. Main tumhara personal AI assistant hoon.";
+
+ if(t.includes("study")||t.includes("parhai"))
+  return "Main tumhari study planning aur learning mein help kar sakti hoon.";
+
+ if(t.includes("youtube"))
+  return "YouTube kholne ke liye main agle version mein phone command add karungi.";
+
+ if(t.includes("reminder")||t.includes("yaad"))
+  return "Reminder system hum ELAN ke next version mein add karenge.";
+
+ return "Maine tumhari baat samajh li. Abhi ELAN ka basic version hai. Agle steps mein real AI brain connect hoga.";
+}
+
+function send(){
+ const text=input.value.trim();
+ if(!text)return;
+ message(text,"me");
+ input.value="";
+ setTimeout(()=>{
+  const r=reply(text);
+  message(r,"elan");
+  speak(r);
+ },300);
+}
+
+input.addEventListener("keydown",e=>{
+ if(e.key==="Enter")send();
+});
+
+function listen(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+ if(!SR){
+  alert("Voice recognition is not supported. Chrome mein try karo.");
+  return;
+ }
+
+ const r=new SR();
+ r.lang="en-US";
+ r.interimResults=false;
+ r.continuous=false;
+
+ status.textContent="ELAN is listening...";
+ r.start();
+
+ r.onresult=e=>{
+  input.value=e.results[0][0].transcript;
+  send();
+ };
+
+ r.onerror=()=>{
+  status.textContent="Voice error — dobara try karo";
+ };
+
+ r.onend=()=>{
+  if(!avatar.classList.contains("speaking"))
+   status.textContent="ELAN is ready";
+ };
+}
+</script>
+
+</body>
+</html>
