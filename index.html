@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELAN AI Assistant</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:#07111f;
+  color:white;
+  font-family:Arial,sans-serif;
+}
+
+.app{
+  width:100%;
+  max-width:520px;
+  margin:auto;
+  padding:20px;
+}
+
+h1{
+  text-align:center;
+  margin:5px 0;
+  font-size:36px;
+}
+
+.sub{
+  text-align:center;
+  color:#9eb0c8;
+  margin-bottom:18px;
+}
+
+.avatar{
+  width:230px;
+  height:230px;
+  margin:15px auto;
+  border-radius:50%;
+  background:linear-gradient(145deg,#243b5d,#101a2b);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  box-shadow:0 0 35px #284f76;
+  animation:float 4s ease-in-out infinite;
+}
+
+.head{
+  width:145px;
+  height:170px;
+  border-radius:48% 48% 45% 45%;
+  background:#c98f6e;
+  position:relative;
+}
+
+.hair{
+  position:absolute;
+  top:-8px;
+  left:8px;
+  width:129px;
+  height:70px;
+  border-radius:60% 60% 25% 25%;
+  background:#171717;
+}
+
+.glasses{
+  position:absolute;
+  top:63px;
+  left:17px;
+  width:112px;
+  display:flex;
+  justify-content:space-between;
+  z-index:3;
+}
+
+.glass{
+  width:48px;
+  height:30px;
+  border:4px solid white;
+  border-radius:10px;
+  background:#dcecff55;
+}
+
+.nose{
+  position:absolute;
+  top:91px;
+  left:68px;
+  width:9px;
+  height:25px;
+  border-radius:50%;
+  background:#a66f55;
+}
+
+.eye{
+  position:absolute;
+  top:74px;
+  width:9px;
+  height:9px;
+  background:#111;
+  border-radius:50%;
+  z-index:4;
+  animation:blink 5s infinite;
+}
+
+.eye.left{left:42px}
+.eye.right{right:42px}
+
+.mouth{
+  position:absolute;
+  left:51px;
+  top:123px;
+  width:44px;
+  height:9px;
+  border-radius:0 0 20px 20px;
+  background:#501f28;
+}
+
+.speaking .mouth{
+  animation:talk .16s infinite alternate;
+}
+
+.body{
+  position:absolute;
+  bottom:-45px;
+  width:150px;
+  height:90px;
+  background:#111;
+  border-radius:35px 35px 10px 10px;
+}
+
+.tie{
+  position:absolute;
+  bottom:0;
+  left:65px;
+  width:20px;
+  height:65px;
+  background:#333;
+  clip-path:polygon(20% 0,80% 0,100% 100%,0 100%);
+}
+
+.hands{
+  position:absolute;
+  bottom:-35px;
+  width:210px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.hand{
+  width:38px;
+  height:65px;
+  background:#c98f6e;
+  border-radius:25px;
+}
+
+.speaking .hand.left{
+  animation:gesture1 .7s infinite alternate;
+}
+
+.speaking .hand.right{
+  animation:gesture2 .9s infinite alternate;
+}
+
+@keyframes float{
+  50%{transform:translateY(-8px)}
+}
+
+@keyframes blink{
+  0%,94%,100%{transform:scaleY(1)}
+  96%{transform:scaleY(.1)}
+}
+
+@keyframes talk{
+  from{height:6px}
+  to{height:25px}
+}
+
+@keyframes gesture1{
+  to{transform:rotate(-18deg) translateY(-12px)}
+}
+
+@keyframes gesture2{
+  to{transform:rotate(18deg) translateY(-10px)}
+}
+
+.status{
+  text-align:center;
+  color:#9eb0c8;
+  min-height:24px;
+}
+
+.card{
+  background:#101d2e;
+  border:1px solid #263c58;
+  border-radius:18px;
+  padding:15px;
+  margin-top:15px;
+}
+
+textarea{
+  width:100%;
+  min-height:80px;
+  resize:none;
+  border:0;
+  outline:0;
+  border-radius:12px;
+  padding:14px;
+  font-size:16px;
+  background:#07111f;
+  color:white;
+}
+
+button{
+  border:0;
+  border-radius:12px;
+  padding:13px 17px;
+  margin:6px 3px;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.ask{background:#2478ff;color:white}
+.voice{background:#20a36a;color:white}
+.stop{background:#a33b45;color:white}
+.remind{background:#7549d8;color:white}
+
+.reply{
+  line-height:1.5;
+  color:#e8eef7;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:10px;
+  border:1px solid #304966;
+  background:#07111f;
+  color:white;
+}
+
+.small{
+  color:#7f91a8;
+  font-size:13px;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<h1>ELAN AI</h1>
+<div class="sub">Your personal voice assistant</div>
+
+<div class="avatar" id="avatar">
+
+  <div class="head">
+    <div class="hair"></div>
+
+    <div class="eye left"></div>
+    <div class="eye right"></div>
+
+    <div class="glasses">
+      <div class="glass"></div>
+      <div class="glass"></div>
+    </div>
+
+    <div class="nose"></div>
+    <div class="mouth"></div>
+
+    <div class="body">
+      <div class="tie"></div>
+    </div>
+
+  </div>
+
+  <div class="hands">
+    <div class="hand left"></div>
+    <div class="hand right"></div>
+  </div>
+
+</div>
+
+<div class="status" id="status">ELAN is ready</div>
+
+<div class="card">
+
+<textarea id="input"
+placeholder="Type something to ELAN..."></textarea>
+
+<button class="ask" onclick="askELAN()">Ask ELAN</button>
+<button class="voice" onclick="listen()">🎤 Speak</button>
+<button class="stop" onclick="stopSpeaking()">🔇 Stop</button>
+
+<div class="reply" id="reply">
+Hello! I am ELAN. You can talk to me or type a question.
+</div>
+
+</div>
+
+<div class="card">
+
+<b>🔔 Reminder</b>
+
+<input id="reminderText" placeholder="Reminder, e.g. Study maths">
+
+<input id="reminderTime" type="datetime-local">
+
+<button class="remind" onclick="setReminder()">Set Reminder</button>
+
+<div id="reminderList" class="small"></div>
+
+</div>
+
+<div class="small">
+Voice features depend on browser support and microphone permission.
+</div>
+
+</div>
+
+<script>
+
+const avatar=document.getElementById("avatar");
+const status=document.getElementById("status");
+const input=document.getElementById("input");
+const reply=document.getElementById("reply");
+
+function speak(text){
+
+  if(!("speechSynthesis" in window)){
+    status.textContent="Speech is not supported";
+    return;
+  }
+
+  speechSynthesis.cancel();
+
+  const voice=new SpeechSynthesisUtterance(text);
+
+  voice.lang="en-US";
+  voice.rate=0.95;
+  voice.pitch=1.05;
+
+  voice.onstart=()=>{
+    avatar.classList.add("speaking");
+    status.textContent="ELAN is speaking...";
+  };
+
+  voice.onend=()=>{
+    avatar.classList.remove("speaking");
+    status.textContent="ELAN is ready";
+  };
+
+  speechSynthesis.speak(voice);
+}
+
+function stopSpeaking(){
+
+  speechSynthesis.cancel();
+  avatar.classList.remove("speaking");
+  status.textContent="ELAN is ready";
+}
+
+function askELAN(){
+
+  const text=input.value.trim();
+
+  if(!text){
+    speak("Please tell me something.");
+    return;
+  }
+
+  const answer=getAnswer(text);
+
+  reply.textContent=answer;
+  speak(answer);
+}
+
+function getAnswer(text){
+
+  const t=text.toLowerCase();
+
+  if(t.includes("hello") || t.includes("hi") || t.includes("salam")){
+    return "Hello! I am ELAN. How can I help you today?";
+  }
+
+  if(t.includes("who are you") || t.includes("your name")){
+    return "My name is ELAN. I am your personal voice assistant.";
+  }
+
+  if(t.includes("study") || t.includes("parhai")){
+    return "Let's study step by step. Choose one topic, study it for a short focused session, then test yourself.";
+  }
+
+  if(t.includes("time")){
+    return "Your current device time is " +
+      new Date().toLocaleTimeString();
+  }
+
+  if(t.includes("date") || t.includes("today")){
+    return "Today is " +
+      new Date().toLocaleDateString();
+  }
+
+  if(t.includes("thank")){
+    return "You're welcome! I am always ready to help.";
+  }
+
+  if(t.includes("good morning")){
+    return "Good morning! Let's make today productive.";
+  }
+
+  if(t.includes("good night")){
+    return "Good night! Take care and rest well.";
+  }
+
+  return "I heard you say: " + text +
+    ". I can handle basic assistant commands here. For full ChatGPT-level answers, this app needs an online AI backend.";
+}
+
+let recognition;
+
+function listen(){
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if(!SpeechRecognition){
+
+    status.textContent="Voice recognition is not supported in this browser.";
+
+    speak("Voice recognition is not supported in this browser.");
+    return;
+  }
+
+  recognition=new SpeechRecognition();
+
+  recognition.lang="en-US";
+  recognition.interimResults=false;
+  recognition.continuous=false;
+
+  recognition.onstart=()=>{
+    status.textContent="ELAN is listening...";
+  };
+
+  recognition.onresult=(event)=>{
+
+    const text=event.results[0][0].transcript;
+
+    input.value=text;
+
+    askELAN();
+  };
+
+  recognition.onerror=()=>{
+    status.textContent="Voice error. Please try again.";
+  };
+
+  recognition.onend=()=>{
+    if(!avatar.classList.contains("speaking")){
+      status.textContent="ELAN is ready";
+    }
+  };
+
+  recognition.start();
+}
+
+function setReminder(){
+
+  const text=document.getElementById("reminderText").value.trim();
+  const time=document.getElementById("reminderTime").value;
+
+  if(!text || !time){
+
+    alert("Please enter reminder and time.");
+    return;
+  }
+
+  const target=new Date(time).getTime();
+  const delay=target-Date.now();
+
+  if(delay<=0){
+
+    alert("Please choose a future time.");
+    return;
+  }
+
+  localStorage.setItem(
+    "elanReminder",
+    JSON.stringify({text:text,time:time})
+  );
+
+  showReminder();
+
+  setTimeout(()=>{
+
+    alert("🔔 ELAN Reminder: "+text);
+
+    speak("Reminder: "+text);
+
+  },delay);
+}
+
+function showReminder(){
+
+  const saved=localStorage.getItem("elanReminder");
+
+  if(!saved)return;
+
+  const data=JSON.parse(saved);
+
+  document.getElementById("reminderList").textContent =
+    "Saved: "+data.text+" — "+data.time;
+}
+
+showReminder();
+
+</script>
+
+</body>
+</html>
