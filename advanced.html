@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ELAN Advanced AI</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#050b14;color:#fff;
+ font-family:Arial,sans-serif;
+}
+.app{max-width:950px;margin:auto;padding:14px}
+header{
+ display:flex;justify-content:space-between;align-items:center;
+ padding:8px 2px 14px
+}
+.logo{font-size:28px;font-weight:800}
+.badge{
+ border:1px solid #28e6b0;color:#28e6b0;
+ border-radius:20px;padding:7px 12px;font-size:12px
+}
+.avatar{
+ height:330px;border-radius:22px;overflow:hidden;
+ position:relative;background:#0b1725;
+ border:1px solid #23384e;
+}
+.avatar img{
+ width:100%;height:100%;object-fit:contain;
+ animation:float 4s ease-in-out infinite;
+}
+@keyframes float{
+ 0%,100%{transform:translateY(0)}
+ 50%{transform:translateY(-5px)}
+}
+.eye{
+ position:absolute;width:11px;height:11px;border-radius:50%;
+ background:#8fffff;box-shadow:0 0 16px #8fffff;
+ animation:blink 5s infinite;
+}
+.e1{left:46%;top:35%}
+.e2{left:54%;top:35%}
+@keyframes blink{
+ 0%,44%,48%,100%{transform:scaleY(1)}
+ 45%,47%{transform:scaleY(.08)}
+}
+.controls,.features{
+ display:grid;gap:7px;margin-top:9px
+}
+.controls{grid-template-columns:repeat(5,1fr)}
+.features{grid-template-columns:repeat(3,1fr)}
+button{
+ border:1px solid #294158;background:#102033;color:white;
+ border-radius:11px;padding:11px 7px
+}
+button:active{transform:scale(.97)}
+.panel{
+ background:#0a1523;border:1px solid #23384e;
+ border-radius:17px;padding:12px;margin-top:11px
+}
+h3{margin:3px 0 10px}
+.chat{height:260px;overflow:auto}
+.msg{
+ padding:10px 12px;border-radius:13px;
+ margin:7px 0;max-width:90%;white-space:pre-wrap
+}
+.user{background:#164044;margin-left:auto}
+.ai{background:#14263a}
+.row{display:flex;gap:7px;margin-top:8px}
+input,textarea,select{
+ width:100%;background:#07111d;color:white;
+ border:1px solid #294158;border-radius:11px;
+ padding:11px;outline:none
+}
+textarea{min-height:90px}
+.small{font-size:12px;color:#9eb0c2}
+.item{
+ padding:9px;background:#102033;border-radius:10px;
+ margin:6px 0;display:flex;justify-content:space-between
+}
+@media(max-width:600px){
+ .controls{grid-template-columns:repeat(3,1fr)}
+ .features{grid-template-columns:repeat(2,1fr)}
+ .avatar{height:280px}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header>
+<div class="logo">ELAN <span style="font-size:14px">ADVANCED</span></div>
+<div class="badge" id="status">ONLINE</div>
+</header>
+
+<div class="avatar">
+<img id="elan" src="elan-clean.png" alt="ELAN">
+<div class="eye e1"></div>
+<div class="eye e2"></div>
+</div>
+
+<div class="controls">
+<button onclick="move('stand')">🧍 Stand</button>
+<button onclick="move('sit')">🪑 Sit</button>
+<button onclick="move('talk')">🗣️ Talk</button>
+<button onclick="move('wave')">👋 Wave</button>
+<button onclick="move('smile')">🙂 Smile</button>
+</div>
+
+<div class="panel">
+<h3>🧠 Advanced AI Brain</h3>
+<div id="chat" class="chat"></div>
+
+<div class="row">
+<input id="input" placeholder="Ask ELAN anything...">
+<button onclick="send()">Send</button>
+<button onclick="voice()">🎙️</button>
+</div>
+</div>
+
+<div class="panel">
+<h3>⚡ Advanced Tools</h3>
+<div class="features">
+<button onclick="calc()">🧮 Calculator</button>
+<button onclick="study()">📚 Deep Study</button>
+<button onclick="translateAI()">🌍 Translator</button>
+<button onclick="addReminder()">⏰ Reminder</button>
+<button onclick="newNote()">📝 Notes</button>
+<button onclick="coding()">💻 Coding</button>
+<button onclick="vision()">👁️ Vision</button>
+<button onclick="files()">📄 Files/PDF</button>
+<button onclick="webAI()">🌐 Web Search</button>
+<button onclick="speakLast()">🔊 Speak</button>
+<button onclick="clearChat()">🗑️ Clear</button>
+<button onclick="personality()">🤝 Personality</button>
+</div>
+</div>
+
+<div class="panel">
+<h3>📝 Notes</h3>
+<textarea id="note" placeholder="Write anything for ELAN..."></textarea>
+<button onclick="saveNote()">Save Note</button>
+<div id="notes"></div>
+</div>
+
+<div class="panel">
+<h3>⏰ Reminders</h3>
+<div class="row">
+<input id="reminder" placeholder="Example: Study at 8 PM">
+<button onclick="addReminder()">Add</button>
+</div>
+<div id="reminders"></div>
+</div>
+
+<div class="panel">
+<h3>🔐 AI Connection</h3>
+<div class="small">
+Cloudflare Worker URL yahan save karo. API key yahan kabhi mat likhna.
+</div>
+<div class="row">
+<input id="worker" placeholder="https://your-worker.workers.dev">
+<button onclick="saveWorker()">Save</button>
+</div>
+</div>
+
+</div>
+
+<script>
+const chat=document.getElementById("chat");
+const input=document.getElementById("input");
+let last="";
+
+function status(x){
+ document.getElementById("status").textContent=x;
+}
+
+function add(text,type){
+ const d=document.createElement("div");
+ d.className="msg "+type;
+ d.textContent=text;
+ chat.appendChild(d);
+ chat.scrollTop=chat.scrollHeight;
+}
+
+function ai(text){
+ last=text;
+ add("ELAN: "+text,"ai");
+ saveHistory();
+}
+
+function send(){
+ const text=input.value.trim();
+ if(!text)return;
+
+ input.value="";
+ add(text,"user");
+ status("THINKING...");
+
+ const url=localStorage.getItem("elanWorker");
+
+ if(!url){
+   ai(localBrain(text));
+   status("ONLINE");
+   return;
+ }
+
+ fetch(url,{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+     message:text,
+     history:getHistory()
+   })
+ })
+ .then(r=>r.json())
+ .then(d=>{
+   const answer=d.reply||d.text||d.response;
+   if(answer){
+     ai(answer);
+     speak(answer);
+   }else{
+     ai("AI ne koi response nahi diya.");
+   }
+   status("ONLINE");
+ })
+ .catch(()=>{
+   ai("AI server se connection nahi ho saka. Worker URL check karo.");
+   status("ONLINE");
+ });
+}
+
+input.addEventListener("keydown",e=>{
+ if(e.key==="Enter")send();
+});
+
+function localBrain(t){
+ const x=t.toLowerCase();
+
+ if(x.includes("hello")||x.includes("hi"))
+ return "Hello! Main ELAN Advanced hoon. Tum mujhse normal conversation, study, coding aur calculations kar sakte ho.";
+
+ if(x.includes("who are you")||x.includes("tum kon"))
+ return "Main ELAN Advanced AI Assistant hoon.";
+
+ if(x.includes("thank"))
+ return "You're welcome! 😊";
+
+ if(x.includes("study"))
+ return "Study Mode ke liye Deep Study button use karo. Main topic ko explanation, examples, important points aur questions mein divide kar sakta hoon.";
+
+ if(x.includes("calculate"))
+ return "Calculator button press karo.";
+
+ return "Mera Advanced interface ready hai. Full AI answers ke liye Cloudflare Worker connect karo.";
+}
+
+/* HISTORY */
+
+function getHistory(){
+ return JSON.parse(localStorage.getItem("elanAdvancedHistory")||"[]");
+}
+
+function saveHistory(){
+ const data=[...chat.querySelectorAll(".msg")].map(x=>x.textContent);
+ localStorage.setItem(
+  "elanAdvancedHistory",
+  JSON.stringify(data.slice(-40))
+ );
+}
+
+function restore(){
+ getHistory().forEach(x=>{
+  add(x,x.startsWith("ELAN:")?"ai":"user");
+ });
+}
+
+function clearChat(){
+ chat.innerHTML="";
+ localStorage.removeItem("elanAdvancedHistory");
+ ai("Chat history clear kar di.");
+}
+
+/* VOICE */
+
+function voice(){
+ const R=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+ if(!R){
+  ai("Is browser mein voice recognition available nahi.");
+  return;
+ }
+
+ const r=new R();
+ r.lang="en-US";
+ r.interimResults=false;
+
+ status("LISTENING...");
+ r.start();
+
+ r
