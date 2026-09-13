@@ -1,79 +1,236 @@
-<!<title>ELAN AI Assistant</title>DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ELAN AI</title>
+<title>ELAN AI Assistant</title>
+
 <style>
 *{box-sizing:border-box}
+
 body{
- margin:0;background:#07111f;color:white;font-family:Arial,sans-serif;
- min-height:100vh;display:flex;justify-content:center
+ margin:0;
+ background:#07111f;
+ color:white;
+ font-family:Arial,sans-serif;
+ min-height:100vh;
+ display:flex;
+ justify-content:center;
 }
-.app{width:100%;max-width:500px;padding:22px 16px}
-h1{text-align:center;font-size:36px;margin:8px}
-.sub{text-align:center;color:#9eb0c8;margin-bottom:20px}
+
+.app{
+ width:100%;
+ max-width:520px;
+ padding:20px 15px 30px;
+}
+
+h1{
+ text-align:center;
+ font-size:36px;
+ margin:5px;
+ letter-spacing:3px;
+}
+
+.sub{
+ text-align:center;
+ color:#9eb0c8;
+ margin-bottom:18px;
+}
+
 .avatar{
- width:210px;height:210px;margin:15px auto 20px;border-radius:50%;
+ width:210px;
+ height:210px;
+ margin:15px auto 18px;
+ border-radius:50%;
  background:linear-gradient(145deg,#203b5d,#091522);
- display:flex;align-items:center;justify-content:center;
- box-shadow:0 0 35px #284f76;animation:float 3s infinite ease-in-out
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ box-shadow:0 0 35px #284f76;
+ animation:float 3s infinite ease-in-out;
+ position:relative;
 }
+
 .face{
- width:125px;height:145px;background:#d9a27f;border-radius:48%;
- position:relative
+ width:125px;
+ height:145px;
+ background:#d9a27f;
+ border-radius:48%;
+ position:relative;
 }
+
 .hair{
- position:absolute;top:-14px;left:-3px;width:131px;height:75px;
- background:#151515;border-radius:65px 65px 25px 25px
+ position:absolute;
+ top:-14px;
+ left:-3px;
+ width:131px;
+ height:75px;
+ background:#151515;
+ border-radius:65px 65px 25px 25px;
 }
+
 .glasses{
- position:absolute;top:51px;left:9px;width:107px;
- display:flex;justify-content:space-between
+ position:absolute;
+ top:51px;
+ left:9px;
+ width:107px;
+ display:flex;
+ justify-content:space-between;
 }
-.glass{width:48px;height:30px;border:4px solid white;border-radius:12px}
+
+.glass{
+ width:48px;
+ height:30px;
+ border:4px solid white;
+ border-radius:12px;
+}
+
 .eyes{
- position:absolute;top:63px;left:28px;width:70px;
- display:flex;justify-content:space-between
+ position:absolute;
+ top:63px;
+ left:28px;
+ width:70px;
+ display:flex;
+ justify-content:space-between;
 }
+
 .eye{
- width:8px;height:8px;background:#111;border-radius:50%;
- animation:blink 4s infinite
+ width:8px;
+ height:8px;
+ background:#111;
+ border-radius:50%;
+ animation:blink 4s infinite;
 }
+
 .mouth{
- position:absolute;top:106px;left:47px;width:31px;height:7px;
- background:#351d20;border-radius:50%
+ position:absolute;
+ top:106px;
+ left:47px;
+ width:31px;
+ height:7px;
+ background:#351d20;
+ border-radius:50%;
 }
-.speaking .mouth{animation:talk .18s infinite alternate}
+
 .suit{
- position:absolute;bottom:-18px;width:125px;height:65px;
- background:#090909;border-radius:25px 25px 10px 10px;z-index:-1
+ position:absolute;
+ bottom:-18px;
+ width:125px;
+ height:65px;
+ background:#090909;
+ border-radius:25px 25px 10px 10px;
+ z-index:-1;
 }
-.status{text-align:center;color:#9eb0c8;margin:10px}
+
+.speaking .mouth{
+ animation:talk .18s infinite alternate;
+}
+
+.listening{
+ animation:pulse 1s infinite;
+}
+
+.status{
+ text-align:center;
+ color:#9eb0c8;
+ margin:10px;
+ font-size:14px;
+}
+
 .chat{
- height:230px;overflow:auto;padding:12px;
- background:#101c2a;border-radius:18px;margin-bottom:12px
+ height:280px;
+ overflow:auto;
+ padding:12px;
+ background:#101c2a;
+ border-radius:18px;
+ margin-bottom:12px;
 }
-.msg{padding:10px 12px;margin:7px 0;border-radius:12px;line-height:1.4}
-.me{background:#21476d;text-align:right}
-.elan{background:#1a2938}
-.controls{display:flex;gap:8px}
+
+.msg{
+ padding:10px 12px;
+ margin:7px 0;
+ border-radius:12px;
+ line-height:1.4;
+ white-space:pre-wrap;
+}
+
+.me{
+ background:#21476d;
+ text-align:right;
+}
+
+.elan{
+ background:#1a2938;
+}
+
+.controls{
+ display:flex;
+ gap:7px;
+}
+
 input{
- flex:1;min-width:0;padding:14px;border:0;border-radius:14px;
- background:#162536;color:white;font-size:16px;outline:none
+ flex:1;
+ min-width:0;
+ padding:14px;
+ border:0;
+ border-radius:14px;
+ background:#162536;
+ color:white;
+ font-size:16px;
+ outline:none;
 }
+
 button{
- border:0;border-radius:14px;padding:12px 15px;
- background:#356894;color:white;font-weight:bold
+ border:0;
+ border-radius:14px;
+ padding:12px 14px;
+ background:#356894;
+ color:white;
+ font-weight:bold;
+ cursor:pointer;
 }
-.mic{font-size:20px}
-@keyframes float{50%{transform:translateY(-8px)}}
-@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
-@keyframes talk{to{height:20px;width:36px}}
+
+button:active{
+ transform:scale(.95);
+}
+
+.mic{
+ font-size:20px;
+}
+
+.smallButtons{
+ display:flex;
+ gap:7px;
+ margin-top:9px;
+}
+
+.smallButtons button{
+ flex:1;
+ font-size:12px;
+ background:#172b40;
+}
+
+@keyframes float{
+ 50%{transform:translateY(-8px)}
+}
+
+@keyframes blink{
+ 0%,94%,100%{transform:scaleY(1)}
+ 97%{transform:scaleY(.1)}
+}
+
+@keyframes talk{
+ to{height:20px;width:36px}
+}
+
+@keyframes pulse{
+ 50%{box-shadow:0 0 60px #4d9de0}
+}
 </style>
 </head>
 
 <body>
+
 <div class="app">
 
 <h1>ELAN</h1>
@@ -82,16 +239,20 @@ button{
 <div class="avatar" id="avatar">
  <div class="face">
   <div class="hair"></div>
+
   <div class="glasses">
    <div class="glass"></div>
    <div class="glass"></div>
   </div>
+
   <div class="eyes">
    <div class="eye"></div>
    <div class="eye"></div>
   </div>
+
   <div class="mouth"></div>
  </div>
+
  <div class="suit"></div>
 </div>
 
@@ -99,8 +260,19 @@ button{
 
 <div class="chat" id="chat">
  <div class="msg elan">
-  Hello! 👋 Main ELAN hoon.<br>
-  Mujhse baat karo ya 🎙️ button dabao.
+  Hello! 👋 Main ELAN hoon.
+  <br><br>
+  Tum mujhse English, Urdu ya Roman Urdu mein baat kar sakte ho.
+  <br><br>
+  Example:
+  <br>
+  "YouTube kholo"
+  <br>
+  "WhatsApp kholo"
+  <br>
+  "Google Maps kholo"
+  <br>
+  "Ali ko WhatsApp message bhejo"
  </div>
 </div>
 
@@ -110,99 +282,439 @@ button{
  <button class="mic" onclick="listen()">🎙️</button>
 </div>
 
+<div class="smallButtons">
+ <button onclick="openApp('youtube')">▶️ YouTube</button>
+ <button onclick="openApp('whatsapp')">💬 WhatsApp</button>
+ <button onclick="openApp('facebook')">ⓕ Facebook</button>
+ <button onclick="clearChat()">🗑️ Clear</button>
+</div>
+
 </div>
 
 <script>
+
 const input=document.getElementById("input");
 const chat=document.getElementById("chat");
 const avatar=document.getElementById("avatar");
 const status=document.getElementById("status");
 
 function message(text,who){
+
  const d=document.createElement("div");
+
  d.className="msg "+who;
+
  d.textContent=text;
+
  chat.appendChild(d);
+
  chat.scrollTop=chat.scrollHeight;
 }
 
+
 function speak(text){
- if(!("speechSynthesis" in window))return;
+
+ if(!("speechSynthesis" in window)) return;
+
  speechSynthesis.cancel();
+
  const u=new SpeechSynthesisUtterance(text);
- u.rate=1;
- u.onstart=()=>{avatar.classList.add("speaking");status.textContent="ELAN is speaking..."}
- u.onend=()=>{avatar.classList.remove("speaking");status.textContent="ELAN is ready"}
+
+ u.rate=.95;
+ u.pitch=1;
+
+ u.onstart=()=>{
+  avatar.classList.add("speaking");
+  status.textContent="ELAN is speaking...";
+ };
+
+ u.onend=()=>{
+  avatar.classList.remove("speaking");
+  status.textContent="ELAN is ready";
+ };
+
  speechSynthesis.speak(u);
 }
 
-function reply(text){
- const t=text.toLowerCase();
 
- if(t.includes("hello")||t.includes("hi")||t.includes("salam"))
-  return "Hello! Main ELAN hoon. Tum mujhse baat kar sakte ho.";
+function respond(text){
 
- if(t.includes("naam")||t.includes("name"))
+ const t=text.toLowerCase().trim();
+
+ /* GREETINGS */
+
+ if(
+  t.includes("hello") ||
+  t.includes("hi") ||
+  t.includes("salam") ||
+  t.includes("assalam")
+ ){
+  return "Wa Alaikum Assalam! 👋 Main ELAN hoon. Batao, main tumhari kya help karun?";
+ }
+
+
+ /* NAME */
+
+ if(
+  t.includes("tumhara naam") ||
+  t.includes("your name") ||
+  t.includes("naam kya")
+ ){
   return "Mera naam ELAN hai. Main tumhara personal AI assistant hoon.";
+ }
 
- if(t.includes("study")||t.includes("parhai"))
-  return "Main tumhari study planning aur learning mein help kar sakti hoon.";
 
- if(t.includes("youtube"))
-  return "YouTube kholne ke liye main agle version mein phone command add karungi.";
+ /* YOUTUBE */
 
- if(t.includes("reminder")||t.includes("yaad"))
-  return "Reminder system hum ELAN ke next version mein add karenge.";
+ if(
+  t.includes("youtube") ||
+  t.includes("یوٹیوب")
+ ){
+  openApp("youtube");
+  return "YouTube open kar rahi hoon. ▶️";
+ }
 
- return "Maine tumhari baat samajh li. Abhi ELAN ka basic version hai. Agle steps mein real AI brain connect hoga.";
+
+ /* WHATSAPP */
+
+ if(
+  t.includes("whatsapp") ||
+  t.includes("واٹس ایپ")
+ ){
+
+  openApp("whatsapp");
+
+  return "WhatsApp open kar rahi hoon. 💬";
+ }
+
+
+ /* FACEBOOK */
+
+ if(
+  t.includes("facebook") ||
+  t.includes("فیس بک")
+ ){
+
+  openApp("facebook");
+
+  return "Facebook open kar rahi hoon.";
+ }
+
+
+ /* INSTAGRAM */
+
+ if(
+  t.includes("instagram") ||
+  t.includes("انسٹاگرام")
+ ){
+
+  openApp("instagram");
+
+  return "Instagram open kar rahi hoon.";
+ }
+
+
+ /* CHROME */
+
+ if(
+  t.includes("chrome") ||
+  t.includes("browser")
+ ){
+
+  openApp("chrome");
+
+  return "Chrome open kar rahi hoon.";
+ }
+
+
+ /* MAPS */
+
+ if(
+  t.includes("maps") ||
+  t.includes("map") ||
+  t.includes("google maps")
+ ){
+
+  openApp("maps");
+
+  return "Google Maps open kar rahi hoon. 🗺️";
+ }
+
+
+ /* CAMERA */
+
+ if(
+  t.includes("camera") ||
+  t.includes("camra")
+ ){
+
+  openApp("camera");
+
+  return "Camera open karne ki koshish kar rahi hoon. 📷";
+ }
+
+
+ /* PHONE */
+
+ if(
+  t.includes("phone") ||
+  t.includes("dialer") ||
+  t.includes("call")
+ ){
+
+  openApp("phone");
+
+  return "Phone app open kar rahi hoon. 📞";
+ }
+
+
+ /* MUSIC */
+
+ if(
+  t.includes("music") ||
+  t.includes("song")
+ ){
+
+  openApp("music");
+
+  return "Music open kar rahi hoon. 🎵";
+ }
+
+
+ /* TIMER */
+
+ if(
+  t.includes("timer") ||
+  t.includes("ٹائمر")
+ ){
+
+  startTimer();
+
+  return "Timer start karne ke liye 10 second ka timer laga rahi hoon. ⏰";
+ }
+
+
+ /* STUDY */
+
+ if(
+  t.includes("study") ||
+  t.includes("parhai") ||
+  t.includes("پڑھائی")
+ ){
+
+  return "Bilkul! Main tumhari study planning, notes, questions aur learning mein help kar sakti hoon.";
+ }
+
+
+ /* WEATHER */
+
+ if(
+  t.includes("weather") ||
+  t.includes("mausam")
+ ){
+
+  return "Weather feature next upgrade mein live internet data ke saath connect kiya jayega.";
+ }
+
+
+ /* MESSAGE */
+
+ if(
+  t.includes("message") ||
+  t.includes("msg") ||
+  t.includes("message bhejo") ||
+  t.includes("message likho")
+ ){
+
+  return "Message command samajh gayi. Abhi main message prepare kar sakti hoon. Automatic sending ke liye Android permission system connect karna hoga.";
+ }
+
+
+ /* HELP */
+
+ if(
+  t.includes("help") ||
+  t.includes("kya kar sakti")
+ ){
+
+  return "Main YouTube, WhatsApp, Facebook, Instagram, Chrome, Maps, Camera, Phone aur Music launch kar sakti hoon. Voice input bhi available hai.";
+ }
+
+
+ /* DEFAULT */
+
+ return "Maine tumhari baat samajh li. 🤖 Real AI brain aur advanced phone-control system next layer mein connect hoga.";
+
 }
+
 
 function send(){
+
  const text=input.value.trim();
+
  if(!text)return;
+
  message(text,"me");
+
  input.value="";
+
+ status.textContent="ELAN is thinking...";
+
  setTimeout(()=>{
-  const r=reply(text);
+
+  const r=respond(text);
+
   message(r,"elan");
+
   speak(r);
- },300);
+
+ },400);
 }
 
+
 input.addEventListener("keydown",e=>{
- if(e.key==="Enter")send();
+
+ if(e.key==="Enter"){
+  send();
+ }
+
 });
 
+
 function listen(){
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+ const SR=
+ window.SpeechRecognition ||
+ window.webkitSpeechRecognition;
 
  if(!SR){
-  alert("Voice recognition is not supported. Chrome mein try karo.");
+
+  alert(
+   "Voice recognition supported nahi hai. Android Chrome mein try karo."
+  );
+
   return;
  }
 
  const r=new SR();
+
  r.lang="en-US";
  r.interimResults=false;
  r.continuous=false;
 
- status.textContent="ELAN is listening...";
+ avatar.classList.add("listening");
+
+ status.textContent="ELAN is listening... 🎙️";
+
  r.start();
 
  r.onresult=e=>{
-  input.value=e.results[0][0].transcript;
+
+  const text=e.results[0][0].transcript;
+
+  input.value=text;
+
+  avatar.classList.remove("listening");
+
   send();
  };
 
  r.onerror=()=>{
+
+  avatar.classList.remove("listening");
+
   status.textContent="Voice error — dobara try karo";
+
  };
 
  r.onend=()=>{
-  if(!avatar.classList.contains("speaking"))
+
+  avatar.classList.remove("listening");
+
+  if(!avatar.classList.contains("speaking")){
    status.textContent="ELAN is ready";
+  }
+
  };
+
 }
+
+
+function openApp(app){
+
+ let url="";
+
+ if(app==="youtube"){
+  url="https://www.youtube.com/";
+ }
+
+ if(app==="whatsapp"){
+  url="https://wa.me/";
+ }
+
+ if(app==="facebook"){
+  url="https://www.facebook.com/";
+ }
+
+ if(app==="instagram"){
+  url="https://www.instagram.com/";
+ }
+
+ if(app==="chrome"){
+  url="https://www.google.com/";
+ }
+
+ if(app==="maps"){
+  url="https://www.google.com/maps/";
+ }
+
+ if(app==="camera"){
+  window.location.href="intent:#Intent;action=android.media.action.IMAGE_CAPTURE;end";
+  return;
+ }
+
+ if(app==="phone"){
+  window.location.href="tel:";
+  return;
+ }
+
+ if(app==="music"){
+  window.location.href="https://music.youtube.com/";
+  return;
+ }
+
+ if(url){
+  window.location.href=url;
+ }
+
+}
+
+
+function startTimer(){
+
+ setTimeout(()=>{
+
+  alert("⏰ ELAN Timer finished!");
+
+  speak("Timer finished.");
+
+ },10000);
+
+}
+
+
+function clearChat(){
+
+ chat.innerHTML="";
+
+ message(
+  "Chat clear ho gaya. 👋 Batao, ELAN kya kare?",
+  "elan"
+ );
+
+}
+
+
 </script>
 
 </body>
