@@ -7,272 +7,165 @@
 
 <style>
 *{box-sizing:border-box}
-
+:root{
+ --bg:#06101d;
+ --panel:#0d1b2b;
+ --panel2:#12263b;
+ --line:#203b55;
+ --text:#f4f8ff;
+ --muted:#91a7bf;
+ --accent:#55b7ff;
+ --good:#52e0a1;
+}
 body{
- margin:0;
- background:#07111f;
- color:white;
- font-family:Arial,sans-serif;
- min-height:100vh;
- display:flex;
- justify-content:center;
+ margin:0;background:
+ radial-gradient(circle at top,#123252 0,#06101d 45%,#030810 100%);
+ color:var(--text);font-family:Arial,sans-serif;min-height:100vh
 }
+.app{width:100%;max-width:620px;margin:auto;padding:16px}
+header{
+ display:flex;justify-content:space-between;align-items:center;
+ padding:8px 2px 18px
+}
+.logo{font-size:29px;font-weight:800;letter-spacing:2px}
+.online{font-size:12px;color:var(--good)}
+.online:before{content:"● ";}
 
-.app{
- width:100%;
- max-width:520px;
- padding:20px 15px 30px;
-}
-
-h1{
- text-align:center;
- font-size:36px;
- margin:5px;
- letter-spacing:3px;
-}
-
-.sub{
- text-align:center;
- color:#9eb0c8;
- margin-bottom:18px;
-}
+h1{font-size:27px;margin:8px 0}
+.sub{color:var(--muted);margin-bottom:18px}
 
 .avatar{
- width:210px;
- height:210px;
- margin:15px auto 18px;
- border-radius:50%;
- background:linear-gradient(145deg,#203b5d,#091522);
- display:flex;
- align-items:center;
- justify-content:center;
- box-shadow:0 0 35px #284f76;
- animation:float 3s infinite ease-in-out;
- position:relative;
+ width:145px;height:145px;margin:8px auto 16px;border-radius:50%;
+ background:linear-gradient(145deg,#244b70,#071522);
+ display:flex;align-items:center;justify-content:center;
+ box-shadow:0 0 40px rgba(75,174,255,.25);
+ animation:float 4s infinite ease-in-out
 }
-
 .face{
- width:125px;
- height:145px;
- background:#d9a27f;
- border-radius:48%;
- position:relative;
+ width:82px;height:96px;background:#d9a27f;border-radius:48%;
+ position:relative
 }
-
 .hair{
- position:absolute;
- top:-14px;
- left:-3px;
- width:131px;
- height:75px;
- background:#151515;
- border-radius:65px 65px 25px 25px;
+ position:absolute;top:-9px;left:-2px;width:86px;height:48px;
+ background:#151515;border-radius:45px 45px 18px 18px
 }
-
 .glasses{
- position:absolute;
- top:51px;
- left:9px;
- width:107px;
- display:flex;
- justify-content:space-between;
+ position:absolute;top:34px;left:6px;width:70px;
+ display:flex;justify-content:space-between
 }
-
-.glass{
- width:48px;
- height:30px;
- border:4px solid white;
- border-radius:12px;
-}
-
+.glass{width:32px;height:20px;border:3px solid white;border-radius:8px}
 .eyes{
- position:absolute;
- top:63px;
- left:28px;
- width:70px;
- display:flex;
- justify-content:space-between;
+ position:absolute;top:43px;left:19px;width:46px;
+ display:flex;justify-content:space-between
 }
-
-.eye{
- width:8px;
- height:8px;
- background:#111;
- border-radius:50%;
- animation:blink 4s infinite;
-}
-
+.eye{width:6px;height:6px;background:#111;border-radius:50%}
 .mouth{
- position:absolute;
- top:106px;
- left:47px;
- width:31px;
- height:7px;
- background:#351d20;
- border-radius:50%;
+ position:absolute;top:70px;left:31px;width:21px;height:5px;
+ background:#351d20;border-radius:50%
 }
+.speaking .mouth{animation:talk .18s infinite alternate}
 
-.suit{
- position:absolute;
- bottom:-18px;
- width:125px;
- height:65px;
- background:#090909;
- border-radius:25px 25px 10px 10px;
- z-index:-1;
-}
-
-.speaking .mouth{
- animation:talk .18s infinite alternate;
-}
-
-.listening{
- animation:pulse 1s infinite;
-}
-
-.status{
- text-align:center;
- color:#9eb0c8;
- margin:10px;
- font-size:14px;
-}
+.status{text-align:center;color:var(--muted);margin-bottom:14px}
 
 .chat{
- height:280px;
- overflow:auto;
- padding:12px;
- background:#101c2a;
- border-radius:18px;
- margin-bottom:12px;
+ height:310px;overflow:auto;padding:12px;
+ background:rgba(13,27,43,.88);
+ border:1px solid var(--line);border-radius:20px
 }
-
 .msg{
- padding:10px 12px;
- margin:7px 0;
- border-radius:12px;
- line-height:1.4;
- white-space:pre-wrap;
+ padding:11px 13px;margin:8px 0;border-radius:14px;
+ line-height:1.45;white-space:pre-wrap
 }
+.me{background:#17466d;text-align:right}
+.elan{background:#172b3f}
 
-.me{
- background:#21476d;
- text-align:right;
-}
-
-.elan{
- background:#1a2938;
-}
-
-.controls{
- display:flex;
- gap:7px;
-}
-
+.controls{display:flex;gap:7px;margin-top:10px}
 input{
- flex:1;
- min-width:0;
- padding:14px;
- border:0;
- border-radius:14px;
- background:#162536;
- color:white;
- font-size:16px;
- outline:none;
+ flex:1;min-width:0;padding:14px;border:1px solid var(--line);
+ border-radius:14px;background:#0c1a29;color:white;font-size:15px;
+ outline:none
 }
-
 button{
- border:0;
- border-radius:14px;
- padding:12px 14px;
- background:#356894;
- color:white;
- font-weight:bold;
- cursor:pointer;
+ border:0;border-radius:13px;padding:12px 14px;
+ background:#24618f;color:white;font-weight:bold;cursor:pointer
+}
+button:active{transform:scale(.97)}
+.mic{font-size:19px}
+
+.grid{
+ display:grid;grid-template-columns:repeat(2,1fr);
+ gap:10px;margin-top:16px
+}
+.card{
+ background:rgba(13,27,43,.9);
+ border:1px solid var(--line);
+ border-radius:17px;padding:15px;cursor:pointer
+}
+.card b{display:block;margin-bottom:6px}
+.card span{font-size:12px;color:var(--muted)}
+
+.section{
+ margin-top:18px;background:rgba(13,27,43,.75);
+ border:1px solid var(--line);border-radius:18px;padding:15px
+}
+.section h2{font-size:17px;margin:0 0 12px}
+
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row button{background:#15344f}
+
+textarea{
+ width:100%;min-height:90px;border:1px solid var(--line);
+ border-radius:13px;background:#091827;color:white;
+ padding:12px;resize:vertical
 }
 
-button:active{
- transform:scale(.95);
-}
+.hidden{display:none}
 
-.mic{
- font-size:20px;
-}
+@keyframes float{50%{transform:translateY(-7px)}}
+@keyframes talk{to{height:16px;width:27px}}
 
-.smallButtons{
- display:flex;
- gap:7px;
- margin-top:9px;
-}
-
-.smallButtons button{
- flex:1;
- font-size:12px;
- background:#172b40;
-}
-
-@keyframes float{
- 50%{transform:translateY(-8px)}
-}
-
-@keyframes blink{
- 0%,94%,100%{transform:scaleY(1)}
- 97%{transform:scaleY(.1)}
-}
-
-@keyframes talk{
- to{height:20px;width:36px}
-}
-
-@keyframes pulse{
- 50%{box-shadow:0 0 60px #4d9de0}
+@media(max-width:420px){
+ .grid{grid-template-columns:1fr 1fr}
+ button{padding:11px}
 }
 </style>
 </head>
 
 <body>
-
 <div class="app">
 
-<h1>ELAN</h1>
-<div class="sub">Your Personal AI Assistant</div>
+<header>
+ <div class="logo">ELAN</div>
+ <div class="online">READY</div>
+</header>
+
+<h1>Your Personal AI Assistant</h1>
+<div class="sub">Chat • Voice • Tools • Productivity</div>
 
 <div class="avatar" id="avatar">
  <div class="face">
   <div class="hair"></div>
-
   <div class="glasses">
    <div class="glass"></div>
    <div class="glass"></div>
   </div>
-
   <div class="eyes">
    <div class="eye"></div>
    <div class="eye"></div>
   </div>
-
   <div class="mouth"></div>
  </div>
-
- <div class="suit"></div>
 </div>
 
 <div class="status" id="status">ELAN is ready</div>
 
 <div class="chat" id="chat">
  <div class="msg elan">
-  Hello! 👋 Main ELAN hoon.
-  <br><br>
-  Tum mujhse English, Urdu ya Roman Urdu mein baat kar sakte ho.
-  <br><br>
-  Example:
-  <br>
-  "YouTube kholo"
-  <br>
-  "WhatsApp kholo"
-  <br>
-  "Google Maps kholo"
-  <br>
-  "Ali ko WhatsApp message bhejo"
+Hello 👋 Main ELAN hoon.
+
+Tum mujhse chat ya voice ke through baat kar sakte ho.
+
+Neeche Tools se apne features open karo.
  </div>
 </div>
 
@@ -282,45 +175,106 @@ button:active{
  <button class="mic" onclick="listen()">🎙️</button>
 </div>
 
-<div class="smallButtons">
- <button onclick="openApp('youtube')">▶️ YouTube</button>
- <button onclick="openApp('whatsapp')">💬 WhatsApp</button>
- <button onclick="openApp('facebook')">ⓕ Facebook</button>
- <button onclick="clearChat()">🗑️ Clear</button>
+<div class="grid">
+
+ <div class="card" onclick="openTool('ai')">
+  <b>🧠 AI Chat</b>
+  <span>Smart assistant brain</span>
+ </div>
+
+ <div class="card" onclick="listen()">
+  <b>🎙️ Voice</b>
+  <span>Speak with ELAN</span>
+ </div>
+
+ <div class="card" onclick="openTool('search')">
+  <b>🌐 Web Search</b>
+  <span>Search the internet</span>
+ </div>
+
+ <div class="card" onclick="openTool('files')">
+  <b>📄 Files</b>
+  <span>PDF & documents</span>
+ </div>
+
+ <div class="card" onclick="openTool('vision')">
+  <b>🖼️ Vision</b>
+  <span>Understand images</span>
+ </div>
+
+ <div class="card" onclick="openTool('notes')">
+  <b>📝 Notes</b>
+  <span>Save your ideas</span>
+ </div>
+
+ <div class="card" onclick="openTool('tasks')">
+  <b>⏰ Tasks</b>
+  <span>Reminders & planning</span>
+ </div>
+
+ <div class="card" onclick="openTool('tools')">
+  <b>⚡ Quick Tools</b>
+  <span>Calculator & translator</span>
+ </div>
+
+</div>
+
+<div class="section" id="toolbox">
+ <h2>⚡ Quick Actions</h2>
+ <div class="row">
+  <button onclick="quick('Help me study')">📚 Study</button>
+  <button onclick="quick('Translate this into English')">🌍 Translate</button>
+  <button onclick="quick('Help me write something')">✍️ Writing</button>
+  <button onclick="quick('Help me with coding')">💻 Coding</button>
+  <button onclick="quick('Give me some ideas')">💡 Ideas</button>
+  <button onclick="quick('Calculate ')">🧮 Calculator</button>
+ </div>
+</div>
+
+<div class="section">
+ <h2>📝 ELAN Notes</h2>
+ <textarea id="notes" placeholder="Yahan apni notes likho..."></textarea>
+ <div class="row" style="margin-top:8px">
+  <button onclick="saveNotes()">Save Notes</button>
+  <button onclick="loadNotes()">Load Notes</button>
+ </div>
+</div>
+
+<div class="section">
+ <h2>⚙️ Settings & Future Controls</h2>
+ <div class="row">
+  <button onclick="toggleVoice()">🔊 Voice On/Off</button>
+  <button onclick="clearChat()">🗑️ Clear Chat</button>
+  <button onclick="futureFeature('Android Control')">📱 Android</button>
+  <button onclick="futureFeature('Avatar')">👤 Avatar</button>
+ </div>
 </div>
 
 </div>
 
 <script>
-
 const input=document.getElementById("input");
 const chat=document.getElementById("chat");
 const avatar=document.getElementById("avatar");
 const status=document.getElementById("status");
 
+let voiceEnabled=true;
+
 function message(text,who){
-
  const d=document.createElement("div");
-
  d.className="msg "+who;
-
  d.textContent=text;
-
  chat.appendChild(d);
-
  chat.scrollTop=chat.scrollHeight;
 }
 
-
 function speak(text){
-
- if(!("speechSynthesis" in window)) return;
+ if(!voiceEnabled || !("speechSynthesis" in window)) return;
 
  speechSynthesis.cancel();
 
  const u=new SpeechSynthesisUtterance(text);
-
- u.rate=.95;
+ u.rate=1;
  u.pitch=1;
 
  u.onstart=()=>{
@@ -336,385 +290,160 @@ function speak(text){
  speechSynthesis.speak(u);
 }
 
+function localReply(text){
+ const t=text.toLowerCase();
 
-function respond(text){
+ if(t.includes("hello")||t.includes("hi")||t.includes("salam"))
+  return "Hello! 👋 Main ELAN hoon. Kaise help karun?";
 
- const t=text.toLowerCase().trim();
+ if(t.includes("naam")||t.includes("name"))
+  return "Mera naam ELAN hai — tumhara personal AI assistant.";
 
- /* GREETINGS */
+ if(t.includes("study")||t.includes("parhai"))
+  return "Bilkul. Main tumhare liye study plan, explanations, questions aur revision help kar sakti hoon.";
 
- if(
-  t.includes("hello") ||
-  t.includes("hi") ||
-  t.includes("salam") ||
-  t.includes("assalam")
- ){
-  return "Wa Alaikum Assalam! 👋 Main ELAN hoon. Batao, main tumhari kya help karun?";
- }
+ if(t.includes("youtube"))
+  return "YouTube command Android version mein proper app control ke saath connect hogi.";
 
+ if(t.includes("whatsapp"))
+  return "WhatsApp control future Android bridge ke through add hoga.";
 
- /* NAME */
+ if(t.includes("weather"))
+  return "Weather tool ko next stage mein live weather API se connect karenge.";
 
- if(
-  t.includes("tumhara naam") ||
-  t.includes("your name") ||
-  t.includes("naam kya")
- ){
-  return "Mera naam ELAN hai. Main tumhara personal AI assistant hoon.";
- }
+ if(t.includes("reminder")||t.includes("yaad"))
+  return "Reminder system next productivity stage mein connect hoga.";
 
-
- /* YOUTUBE */
-
- if(
-  t.includes("youtube") ||
-  t.includes("یوٹیوب")
- ){
-  openApp("youtube");
-  return "YouTube open kar rahi hoon. ▶️";
- }
-
-
- /* WHATSAPP */
-
- if(
-  t.includes("whatsapp") ||
-  t.includes("واٹس ایپ")
- ){
-
-  openApp("whatsapp");
-
-  return "WhatsApp open kar rahi hoon. 💬";
- }
-
-
- /* FACEBOOK */
-
- if(
-  t.includes("facebook") ||
-  t.includes("فیس بک")
- ){
-
-  openApp("facebook");
-
-  return "Facebook open kar rahi hoon.";
- }
-
-
- /* INSTAGRAM */
-
- if(
-  t.includes("instagram") ||
-  t.includes("انسٹاگرام")
- ){
-
-  openApp("instagram");
-
-  return "Instagram open kar rahi hoon.";
- }
-
-
- /* CHROME */
-
- if(
-  t.includes("chrome") ||
-  t.includes("browser")
- ){
-
-  openApp("chrome");
-
-  return "Chrome open kar rahi hoon.";
- }
-
-
- /* MAPS */
-
- if(
-  t.includes("maps") ||
-  t.includes("map") ||
-  t.includes("google maps")
- ){
-
-  openApp("maps");
-
-  return "Google Maps open kar rahi hoon. 🗺️";
- }
-
-
- /* CAMERA */
-
- if(
-  t.includes("camera") ||
-  t.includes("camra")
- ){
-
-  openApp("camera");
-
-  return "Camera open karne ki koshish kar rahi hoon. 📷";
- }
-
-
- /* PHONE */
-
- if(
-  t.includes("phone") ||
-  t.includes("dialer") ||
-  t.includes("call")
- ){
-
-  openApp("phone");
-
-  return "Phone app open kar rahi hoon. 📞";
- }
-
-
- /* MUSIC */
-
- if(
-  t.includes("music") ||
-  t.includes("song")
- ){
-
-  openApp("music");
-
-  return "Music open kar rahi hoon. 🎵";
- }
-
-
- /* TIMER */
-
- if(
-  t.includes("timer") ||
-  t.includes("ٹائمر")
- ){
-
-  startTimer();
-
-  return "Timer start karne ke liye 10 second ka timer laga rahi hoon. ⏰";
- }
-
-
- /* STUDY */
-
- if(
-  t.includes("study") ||
-  t.includes("parhai") ||
-  t.includes("پڑھائی")
- ){
-
-  return "Bilkul! Main tumhari study planning, notes, questions aur learning mein help kar sakti hoon.";
- }
-
-
- /* WEATHER */
-
- if(
-  t.includes("weather") ||
-  t.includes("mausam")
- ){
-
-  return "Weather feature next upgrade mein live internet data ke saath connect kiya jayega.";
- }
-
-
- /* MESSAGE */
-
- if(
-  t.includes("message") ||
-  t.includes("msg") ||
-  t.includes("message bhejo") ||
-  t.includes("message likho")
- ){
-
-  return "Message command samajh gayi. Abhi main message prepare kar sakti hoon. Automatic sending ke liye Android permission system connect karna hoga.";
- }
-
-
- /* HELP */
-
- if(
-  t.includes("help") ||
-  t.includes("kya kar sakti")
- ){
-
-  return "Main YouTube, WhatsApp, Facebook, Instagram, Chrome, Maps, Camera, Phone aur Music launch kar sakti hoon. Voice input bhi available hai.";
- }
-
-
- /* DEFAULT */
-
- return "Maine tumhari baat samajh li. 🤖 Real AI brain aur advanced phone-control system next layer mein connect hoga.";
-
+ return "Main ELAN hoon. Abhi mera secure AI brain connect hona baqi hai. Is dashboard mein uske liye master structure ready hai.";
 }
 
-
 function send(){
-
  const text=input.value.trim();
-
  if(!text)return;
 
  message(text,"me");
-
  input.value="";
 
- status.textContent="ELAN is thinking...";
-
  setTimeout(()=>{
-
-  const r=respond(text);
-
+  const r=localReply(text);
   message(r,"elan");
-
   speak(r);
-
- },400);
+ },250);
 }
 
-
 input.addEventListener("keydown",e=>{
-
- if(e.key==="Enter"){
-  send();
- }
-
+ if(e.key==="Enter")send();
 });
 
+function quick(text){
+ input.value=text;
+ input.focus();
+}
 
 function listen(){
-
- const SR=
- window.SpeechRecognition ||
- window.webkitSpeechRecognition;
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 
  if(!SR){
-
-  alert(
-   "Voice recognition supported nahi hai. Android Chrome mein try karo."
-  );
-
+  alert("Voice recognition Chrome mein available nahi hai.");
   return;
  }
 
  const r=new SR();
-
  r.lang="en-US";
  r.interimResults=false;
  r.continuous=false;
 
- avatar.classList.add("listening");
+ status.textContent="ELAN is listening...";
 
- status.textContent="ELAN is listening... 🎙️";
-
- r.start();
+ try{
+  r.start();
+ }catch(e){return;}
 
  r.onresult=e=>{
-
-  const text=e.results[0][0].transcript;
-
-  input.value=text;
-
-  avatar.classList.remove("listening");
-
+  input.value=e.results[0][0].transcript;
   send();
  };
 
  r.onerror=()=>{
-
-  avatar.classList.remove("listening");
-
   status.textContent="Voice error — dobara try karo";
-
  };
 
  r.onend=()=>{
-
-  avatar.classList.remove("listening");
-
-  if(!avatar.classList.contains("speaking")){
+  if(!avatar.classList.contains("speaking"))
    status.textContent="ELAN is ready";
-  }
+ };
+}
 
+function openTool(tool){
+ const names={
+  ai:"AI Chat",
+  search:"Web Search",
+  files:"Files & PDF",
+  vision:"Image Vision",
+  notes:"Notes",
+  tasks:"Tasks & Reminders",
+  tools:"Quick Tools"
  };
 
+ const name=names[tool]||tool;
+
+ message("Open "+name,"me");
+
+ let reply="";
+
+ if(tool==="ai")
+  reply="AI Chat ready. Secure AI brain connection is the next step.";
+
+ else if(tool==="search")
+  reply="Web Search module ready. Isay live search service se connect karenge.";
+
+ else if(tool==="files")
+  reply="Files/PDF module ready. Upload and document analysis next stage mein add hoga.";
+
+ else if(tool==="vision")
+  reply="Vision module ready. Image understanding AI ke saath connect hoga.";
+
+ else if(tool==="notes")
+  reply="Notes section neeche available hai.";
+
+ else if(tool==="tasks")
+  reply="Tasks and reminders module planned hai.";
+
+ else
+  reply="Quick Tools ready.";
+
+ message(reply,"elan");
+ speak(reply);
 }
 
-
-function openApp(app){
-
- let url="";
-
- if(app==="youtube"){
-  url="https://www.youtube.com/";
- }
-
- if(app==="whatsapp"){
-  url="https://wa.me/";
- }
-
- if(app==="facebook"){
-  url="https://www.facebook.com/";
- }
-
- if(app==="instagram"){
-  url="https://www.instagram.com/";
- }
-
- if(app==="chrome"){
-  url="https://www.google.com/";
- }
-
- if(app==="maps"){
-  url="https://www.google.com/maps/";
- }
-
- if(app==="camera"){
-  window.location.href="intent:#Intent;action=android.media.action.IMAGE_CAPTURE;end";
-  return;
- }
-
- if(app==="phone"){
-  window.location.href="tel:";
-  return;
- }
-
- if(app==="music"){
-  window.location.href="https://music.youtube.com/";
-  return;
- }
-
- if(url){
-  window.location.href=url;
- }
-
+function saveNotes(){
+ localStorage.setItem("elan_notes",
+  document.getElementById("notes").value
+ );
+ alert("Notes saved ✅");
 }
 
-
-function startTimer(){
-
- setTimeout(()=>{
-
-  alert("⏰ ELAN Timer finished!");
-
-  speak("Timer finished.");
-
- },10000);
-
+function loadNotes(){
+ document.getElementById("notes").value=
+  localStorage.getItem("elan_notes")||"";
 }
-
 
 function clearChat(){
-
  chat.innerHTML="";
-
- message(
-  "Chat clear ho gaya. 👋 Batao, ELAN kya kare?",
-  "elan"
- );
-
+ message("Chat cleared. 👋","elan");
 }
 
+function toggleVoice(){
+ voiceEnabled=!voiceEnabled;
+ status.textContent=voiceEnabled?
+  "Voice enabled 🔊":"Voice disabled 🔇";
+}
 
+function futureFeature(name){
+ const text=name+" Android/future module ke liye ready rakha gaya hai.";
+ message(text,"elan");
+ speak(text);
+}
 </script>
 
 </body>
