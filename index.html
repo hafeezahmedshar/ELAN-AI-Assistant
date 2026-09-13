@@ -1,173 +1,745 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ELAN AI Assistant</title>
 
 <style>
 *{box-sizing:border-box}
-
-html,body{
- margin:0;
- width:100%;
- height:100%;
- overflow:hidden;
- background:#050b14;
- font-family:Arial,sans-serif;
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#07101b;
+  color:#fff;
 }
-
-#elan{
- position:fixed;
- inset:0;
- width:100vw;
- height:100vh;
- overflow:hidden;
- background:#050b14;
+.app{
+  min-height:100vh;
+  max-width:900px;
+  margin:auto;
+  padding:14px;
 }
-
-#elan img{
- width:100%;
- height:100%;
- object-fit:cover;
- object-position:center;
- display:block;
- transition:transform .45s ease,filter .45s ease;
- animation:breath 4s ease-in-out infinite;
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 4px;
 }
-
-@keyframes breath{
- 0%,100%{transform:scale(1) translateY(0)}
- 50%{transform:scale(1.012) translateY(-4px)}
+.logo{font-size:26px;font-weight:bold}
+.status{
+  padding:7px 12px;
+  border:1px solid #20e0a0;
+  border-radius:20px;
+  color:#20e0a0;
+  font-size:12px;
 }
-
-.talking{
- animation:talk .22s ease-in-out infinite alternate!important;
+.avatarBox{
+  position:relative;
+  height:330px;
+  overflow:hidden;
+  border-radius:24px;
+  background:#101d2c;
+  border:1px solid #26394d;
 }
-
-@keyframes talk{
- from{transform:scale(1.012) translateY(-3px)}
- to{transform:scale(1.025) translateY(-7px)}
+.avatar{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  animation:float 4s ease-in-out infinite;
 }
-
-.wave{
- animation:wave 1.2s ease-in-out infinite alternate!important;
+@keyframes float{
+  0%,100%{transform:translateY(0) rotate(0)}
+  50%{transform:translateY(-5px) rotate(.3deg)}
 }
-
-@keyframes wave{
- from{transform:rotate(-1deg) scale(1.01)}
- to{transform:rotate(1deg) scale(1.025)}
+.eyeGlow{
+  position:absolute;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#7dfcff;
+  box-shadow:0 0 18px #7dfcff;
+  opacity:.7;
+  animation:blink 5s infinite;
 }
-
-.sit{
- transform:scale(1.08) translateY(3%)!important;
+.eye1{left:46%;top:35%}
+.eye2{left:54%;top:35%}
+@keyframes blink{
+  0%,44%,48%,100%{transform:scaleY(1);opacity:.7}
+  45%,47%{transform:scaleY(.08);opacity:.2}
 }
-
-.smile{
- filter:brightness(1.08) saturate(1.12);
- transform:scale(1.025);
-}
-
 .controls{
- position:absolute;
- bottom:22px;
- left:50%;
- transform:translateX(-50%);
- display:flex;
- flex-wrap:wrap;
- justify-content:center;
- gap:8px;
- width:94%;
- z-index:5;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:7px;
+  margin-top:9px;
 }
-
 button{
- border:1px solid #55b8ff;
- background:rgba(8,28,50,.88);
- color:white;
- padding:11px 15px;
- border-radius:16px;
- font-size:14px;
- box-shadow:0 0 12px rgba(70,170,255,.25);
+  border:1px solid #30465c;
+  background:#122235;
+  color:#fff;
+  padding:11px 6px;
+  border-radius:12px;
+  cursor:pointer;
 }
-
-button:active{
- transform:scale(.94);
+button:active{transform:scale(.97)}
+button:hover{background:#19324c}
+.panel{
+  margin-top:12px;
+  background:#0c1826;
+  border:1px solid #26394d;
+  border-radius:18px;
+  padding:12px;
+}
+.chat{
+  height:260px;
+  overflow:auto;
+  padding:5px;
+}
+.msg{
+  margin:7px 0;
+  padding:10px 12px;
+  border-radius:14px;
+  max-width:88%;
+  white-space:pre-wrap;
+}
+.elan{background:#14273b}
+.user{background:#173f42;margin-left:auto}
+.inputRow{
+  display:flex;
+  gap:7px;
+  margin-top:8px;
+}
+input,textarea,select{
+  width:100%;
+  background:#08131f;
+  color:#fff;
+  border:1px solid #30465c;
+  border-radius:12px;
+  padding:11px;
+  outline:none;
+}
+textarea{min-height:90px;resize:vertical}
+.quick{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+h3{margin:5px 0 10px}
+.small{font-size:12px;color:#9fb0c2}
+.list{
+  max-height:180px;
+  overflow:auto;
+}
+.item{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  padding:9px;
+  margin:6px 0;
+  background:#101f30;
+  border-radius:10px;
+}
+@media(max-width:600px){
+  .controls{grid-template-columns:repeat(3,1fr)}
+  .quick{grid-template-columns:repeat(2,1fr)}
+  .avatarBox{height:280px}
 }
 </style>
 </head>
 
 <body>
+<div class="app">
 
-<div id="elan">
+<header>
+  <div class="logo">ELAN</div>
+  <div class="status" id="status">READY</div>
+</header>
 
-<img id="elanImage"
-src="elan-fullscreen.png"
-onerror="this.src='elan-avatar.png'">
+<div class="avatarBox">
+  <img id="avatar" class="avatar" src="elan-clean.png" alt="ELAN">
+  <div class="eyeGlow eye1"></div>
+  <div class="eyeGlow eye2"></div>
+</div>
 
 <div class="controls">
-<button onclick="stand()">Stand</button>
-<button onclick="sit()">Sit</button>
-<button onclick="talk()">Talk</button>
-<button onclick="wave()">Wave</button>
-<button onclick="smile()">Smile</button>
+  <button onclick="avatarMove('stand')">Stand</button>
+  <button onclick="avatarMove('sit')">Sit</button>
+  <button onclick="avatarMove('talk')">Talk</button>
+  <button onclick="avatarMove('wave')">Wave</button>
+  <button onclick="avatarMove('smile')">Smile</button>
+</div>
+
+<div class="panel">
+<h3>🤖 ELAN AI</h3>
+
+<div id="chat" class="chat"></div>
+
+<div class="inputRow">
+  <input id="message" placeholder="Ask ELAN anything...">
+  <button onclick="sendMessage()">Send</button>
+  <button onclick="startVoice()">🎙️</button>
+</div>
+</div>
+
+<div class="panel">
+<h3>⚡ Quick Actions</h3>
+<div class="quick">
+<button onclick="calculator()">🧮 Calculator</button>
+<button onclick="study()">📚 Study</button>
+<button onclick="translator()">🌍 Translator</button>
+<button onclick="speakLast()">🔊 Speak</button>
+<button onclick="addTask()">⏰ Reminder</button>
+<button onclick="clearChat()">🗑️ Clear Chat</button>
+</div>
+</div>
+
+<div class="panel">
+<h3>📝 Notes</h3>
+<textarea id="note" placeholder="Write a note..."></textarea>
+<button onclick="saveNote()">Save Note</button>
+<div id="notes" class="list"></div>
+</div>
+
+<div class="panel">
+<h3>⏰ Tasks / Reminders</h3>
+<div class="inputRow">
+<input id="task" placeholder="Example: Study at 8 PM">
+<button onclick="addTask()">Add</button>
+</div>
+<div id="tasks" class="list"></div>
+</div>
+
+<div class="panel">
+<h3>⚙️ AI Backend</h3>
+<div class="small">
+Apna Cloudflare Worker URL yahan set karo. API key yahan mat likhna.
+</div>
+<div class="inputRow">
+<input id="workerUrl" placeholder="https://your-worker.workers.dev">
+<button onclick="saveWorker()">Save</button>
+</div>
 </div>
 
 </div>
 
 <script>
+/* =========================
+   ELAN CORE
+========================= */
 
-const img=document.getElementById("elanImage");
+const chat=document.getElementById("chat");
+const message=document.getElementById("message");
+const status=document.getElementById("status");
 
-function reset(){
- img.className="";
+let lastReply="";
+
+function addMessage(text,type){
+  const div=document.createElement("div");
+  div.className="msg "+type;
+  div.textContent=text;
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
 }
 
-function stand(){
- reset();
+function elanSay(text){
+  lastReply=text;
+  addMessage("ELAN: "+text,"elan");
 }
 
-function sit(){
- reset();
- img.classList.add("sit");
+function userSay(text){
+  addMessage(text,"user");
 }
 
-function talk(){
- reset();
- img.classList.add("talking");
-
- setTimeout(()=>{
-   img.classList.remove("talking");
- },4000);
+function setStatus(t){
+  status.textContent=t;
 }
 
-function wave(){
- reset();
- img.classList.add("wave");
+/* =========================
+   CHAT
+========================= */
 
- setTimeout(()=>{
-   img.classList.remove("wave");
- },3500);
+async function sendMessage(){
+  const text=message.value.trim();
+  if(!text)return;
+
+  message.value="";
+  userSay(text);
+  setStatus("THINKING...");
+
+  const url=localStorage.getItem("elanWorker");
+
+  if(!url){
+    elanSay(localReply(text));
+    setStatus("READY");
+    speak(lastReply);
+    return;
+  }
+
+  try{
+    const res=await fetch(url,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        message:text,
+        history:getHistory()
+      })
+    });
+
+    const data=await res.json();
+
+    const reply=data.reply || data.text || data.response;
+
+    if(reply){
+      elanSay(reply);
+      speak(reply);
+    }else{
+      elanSay("Mujhe AI response nahi mila.");
+    }
+
+  }catch(e){
+    elanSay("AI connection mein problem hai. Worker URL check karo.");
+  }
+
+  setStatus("READY");
 }
 
-function smile(){
- reset();
- img.classList.add("smile");
+message.addEventListener("keydown",e=>{
+  if(e.key==="Enter")sendMessage();
+});
 
- setTimeout(()=>{
-   img.classList.remove("smile");
- },1800);
+function localReply(t){
+  t=t.toLowerCase();
+
+  if(t.includes("hello")||t.includes("hi"))
+    return "Hello! Main ELAN hoon. Tum mujhse koi bhi sawal pooch sakte ho.";
+
+  if(t.includes("who are you")||t.includes("tum kon"))
+    return "Main ELAN AI Assistant hoon.";
+
+  if(t.includes("time"))
+    return "Main browser ke current time ko use kar sakta hoon.";
+
+  if(t.includes("calculate"))
+    return "Calculator button use karo aur expression enter karo.";
+
+  if(t.includes("study"))
+    return "Study Mode kholo. Main topic ko simple explanation, examples aur questions ke saath samjha sakta hoon.";
+
+  return "Abhi mera local mode active hai. AI Brain connect hone ke baad main detailed answers de sakta hoon.";
 }
 
-/* natural idle movement */
+/* =========================
+   HISTORY
+========================= */
+
+function getHistory(){
+  return JSON.parse(localStorage.getItem("elanHistory")||"[]");
+}
+
+function saveHistory(){
+  const arr=[...chat.querySelectorAll(".msg")].map(x=>x.textContent);
+  localStorage.setItem("elanHistory",JSON.stringify(arr.slice(-30)));
+}
+
+function restoreHistory(){
+  const arr=getHistory();
+  arr.forEach(x=>{
+    const type=x.startsWith("ELAN:")?"elan":"user";
+    addMessage(x,type);
+  });
+}
+
+function clearChat(){
+  chat.innerHTML="";
+  localStorage.removeItem("elanHistory");
+  elanSay("Chat clear kar di.");
+}
+
+/* =========================
+   VOICE
+========================= */
+
+function startVoice(){
+  const SpeechRecognition=
+    window.SpeechRecognition||
+    window.webkitSpeechRecognition;
+
+  if(!SpeechRecognition){
+    elanSay("Is browser mein voice recognition available nahi hai.");
+    return;
+  }
+
+  const rec=new SpeechRecognition();
+  rec.lang="en-US";
+  rec.interimResults=false;
+
+  setStatus("LISTENING...");
+
+  rec.start();
+
+  rec.onresult=e=>{
+    message.value=e.results[0][0].transcript;
+    setStatus("READY");
+    sendMessage();
+  };
+
+  rec.onerror=()=>{
+    setStatus("READY");
+    elanSay("Voice input nahi mil saka.");
+  };
+}
+
+function speak(text){
+  if(!("speechSynthesis" in window))return;
+
+  speechSynthesis.cancel();
+
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=.95;
+  u.pitch=1.05;
+
+  speechSynthesis.speak(u);
+}
+
+function speakLast(){
+  if(lastReply)speak(lastReply);
+}
+
+/* =========================
+   AVATAR MOVEMENT
+========================= */
+
+function avatarMove(mode){
+  const a=document.getElementById("avatar");
+
+  if(mode==="stand"){
+    a.style.transform="translateY(0)";
+  }
+
+  if(mode==="sit"){
+    a.style.transform="translateY(18px) scale(.96)";
+  }
+
+  if(mode==="talk"){
+    a.style.animation="talk .35s ease-in-out infinite alternate";
+    setTimeout(()=>{
+      a.style.animation="float 4s ease-in-out infinite";
+    },4000);
+  }
+
+  if(mode==="wave"){
+    a.style.animation="wave .5s ease-in-out 5 alternate";
+    setTimeout(()=>{
+      a.style.animation="float 4s ease-in-out infinite";
+    },3000);
+  }
+
+  if(mode==="smile"){
+    a.style.transform="scale(1.02)";
+    setTimeout(()=>{
+      a.style.transform="";
+    },1800);
+  }
+}
+
+const extra=document.createElement("style");
+extra.textContent=`
+@keyframes talk{
+ from{transform:translateY(0) rotate(-.5deg)}
+ to{transform:translateY(-4px) rotate(.5deg)}
+}
+@keyframes wave{
+ from{transform:rotate(-1deg) translateY(0)}
+ to{transform:rotate(1deg) translateY(-5px)}
+}`;
+document.head.appendChild(extra);
+
+/* =========================
+   CALCULATOR
+========================= */
+
+function calculator(){
+  const expression=prompt(
+    "Calculation likho:",
+    "25*4+10"
+  );
+
+  if(!expression)return;
+
+  try{
+    if(!/^[0-9+\-*/().%\s]+$/.test(expression))
+      throw new Error();
+
+    const result=Function(
+      '"use strict";return ('+expression+')'
+    )();
+
+    elanSay("Answer: "+result);
+    speak("The answer is "+result);
+
+  }catch{
+    elanSay("Calculation samajh nahi aayi.");
+  }
+}
+
+/* =========================
+   NOTES
+========================= */
+
+function saveNote(){
+  const value=document.getElementById("note").value.trim();
+  if(!value)return;
+
+  const notes=JSON.parse(
+    localStorage.getItem("elanNotes")||"[]"
+  );
+
+  notes.push({
+    text:value,
+    time:new Date().toLocaleString()
+  });
+
+  localStorage.setItem(
+    "elanNotes",
+    JSON.stringify(notes)
+  );
+
+  document.getElementById("note").value="";
+  renderNotes();
+}
+
+function renderNotes(){
+  const box=document.getElementById("notes");
+  box.innerHTML="";
+
+  const notes=JSON.parse(
+    localStorage.getItem("elanNotes")||"[]"
+  );
+
+  notes.slice().reverse().forEach((n,i)=>{
+    const d=document.createElement("div");
+    d.className="item";
+    d.innerHTML=
+      "<span>"+escapeHtml(n.text)+
+      "<br><small>"+n.time+"</small></span>"+
+      "<button onclick='deleteNote("+
+      (notes.length-1-i)+")'>×</button>";
+
+    box.appendChild(d);
+  });
+}
+
+function deleteNote(i){
+  const notes=JSON.parse(
+    localStorage.getItem("elanNotes")||"[]"
+  );
+  notes.splice(i,1);
+  localStorage.setItem("elanNotes",JSON.stringify(notes));
+  renderNotes();
+}
+
+/* =========================
+   TASKS
+========================= */
+
+function addTask(){
+  let value=document.getElementById("task").value.trim();
+
+  if(!value){
+    value=prompt("Reminder/task likho:");
+  }
+
+  if(!value)return;
+
+  const tasks=JSON.parse(
+    localStorage.getItem("elanTasks")||"[]"
+  );
+
+  tasks.push({
+    text:value,
+    done:false,
+    time:new Date().toLocaleString()
+  });
+
+  localStorage.setItem(
+    "elanTasks",
+    JSON.stringify(tasks)
+  );
+
+  document.getElementById("task").value="";
+  renderTasks();
+}
+
+function renderTasks(){
+  const box=document.getElementById("tasks");
+  box.innerHTML="";
+
+  const tasks=JSON.parse(
+    localStorage.getItem("elanTasks")||"[]"
+  );
+
+  tasks.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="item";
+
+    d.innerHTML=
+      "<span>"+
+      (t.done?"✅ ":"⏰ ")+
+      escapeHtml(t.text)+
+      "<br><small>"+t.time+"</small>"+
+      "</span>"+
+      "<button onclick='doneTask("+i+")'>✓</button>";
+
+    box.appendChild(d);
+  });
+}
+
+function doneTask(i){
+  const tasks=JSON.parse(
+    localStorage.getItem("elanTasks")||"[]"
+  );
+
+  tasks[i].done=!tasks[i].done;
+
+  localStorage.setItem(
+    "elanTasks",
+    JSON.stringify(tasks)
+  );
+
+  renderTasks();
+}
+
+/* =========================
+   STUDY MODE
+========================= */
+
+function study(){
+  const topic=prompt(
+    "Kis topic ko study karna hai?"
+  );
+
+  if(!topic)return;
+
+  message.value=
+    "Study Mode: "+topic+
+    ". Is topic ko simple language mein explain karo, examples do, phir important points aur practice questions do.";
+
+  sendMessage();
+}
+
+/* =========================
+   TRANSLATOR
+========================= */
+
+function translator(){
+  const text=prompt(
+    "Kya translate karna hai?"
+  );
+
+  if(!text)return;
+
+  const lang=prompt(
+    "Kis language mein? Example: Urdu, English, Arabic",
+    "Urdu"
+  );
+
+  if(!lang)return;
+
+  message.value=
+    "Translate this into "+lang+": "+text;
+
+  sendMessage();
+}
+
+/* =========================
+   WORKER URL
+========================= */
+
+function saveWorker(){
+  const url=document
+    .getElementById("workerUrl")
+    .value.trim();
+
+  if(!url)return;
+
+  localStorage.setItem("elanWorker",url);
+
+  elanSay(
+    "AI Worker URL save ho gaya. Ab ELAN AI Brain se connect hone ki koshish karega."
+  );
+}
+
+function loadWorker(){
+  const url=localStorage.getItem("elanWorker");
+  if(url)
+    document.getElementById("workerUrl").value=url;
+}
+
+/* =========================
+   HELPERS
+========================= */
+
+function escapeHtml(text){
+  return text
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
+/* =========================
+   NATURAL BLINK / MOVEMENT
+========================= */
+
+function randomBlink(){
+  const e1=document.querySelector(".eye1");
+  const e2=document.querySelector(".eye2");
+
+  e1.style.transform="scaleY(.08)";
+  e2.style.transform="scaleY(.08)";
+
+  setTimeout(()=>{
+    e1.style.transform="";
+    e2.style.transform="";
+  },130);
+}
 
 setInterval(()=>{
- if(!img.className){
-   img.style.filter=
-     "brightness("+(1+Math.random()*0.025)+")";
- }
-},1800);
+  if(Math.random()>.35)
+    randomBlink();
+},2500);
+
+/* small natural head movement */
+setInterval(()=>{
+  const a=document.getElementById("avatar");
+
+  if(!a.matches(":hover")){
+    const x=(Math.random()-.5)*2;
+    const y=(Math.random()-.5)*3;
+
+    a.style.marginLeft=x+"px";
+    a.style.marginTop=y+"px";
+  }
+},3000);
+
+/* =========================
+   START
+========================= */
+
+restoreHistory();
+renderNotes();
+renderTasks();
+loadWorker();
+
+if(!chat.children.length){
+  elanSay(
+    "Hello! Main ELAN hoon. 🤖\n"+
+    "Calculator, Notes, Tasks, Study, Translator aur Voice ready hain.\n"+
+    "AI Brain ke liye Cloudflare Worker connect karo."
+  );
+}
+
+setInterval(saveHistory,3000);
 
 </script>
-
 </body>
-</html>
+ </html>
