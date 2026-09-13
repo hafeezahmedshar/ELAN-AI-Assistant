@@ -1,423 +1,173 @@
-<!-- ELAN 3D CHARACTER -->
-<div id="elan3d">
-  <canvas id="elanCanvas"></canvas>
-
-  <div class="elanControls">
-    <button onclick="elanStand()">Stand</button>
-    <button onclick="elanSit()">Sit</button>
-    <button onclick="elanTalk()">Talk</button>
-    <button onclick="elanWave()">Wave</button>
-    <button onclick="elanSmile()">Smile</button>
-  </div>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ELAN AI Assistant</title>
 
 <style>
-#elan3d{
-  position:fixed;
-  inset:0;
-  width:100vw;
-  height:100vh;
-  z-index:999;
-  background:radial-gradient(circle,#183b5e,#050b14 75%);
-  overflow:hidden;
+*{box-sizing:border-box}
+
+html,body{
+ margin:0;
+ width:100%;
+ height:100%;
+ overflow:hidden;
+ background:#050b14;
+ font-family:Arial,sans-serif;
 }
 
-#elanCanvas{
-  width:100%;
-  height:100%;
-  display:block;
+#elan{
+ position:fixed;
+ inset:0;
+ width:100vw;
+ height:100vh;
+ overflow:hidden;
+ background:#050b14;
 }
 
-.elanControls{
-  position:absolute;
-  bottom:25px;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  justify-content:center;
+#elan img{
+ width:100%;
+ height:100%;
+ object-fit:cover;
+ object-position:center;
+ display:block;
+ transition:transform .45s ease,filter .45s ease;
+ animation:breath 4s ease-in-out infinite;
 }
 
-.elanControls button{
-  background:#172d45;
-  border:1px solid #438ac4;
-  color:white;
-  padding:10px 14px;
-  border-radius:14px;
+@keyframes breath{
+ 0%,100%{transform:scale(1) translateY(0)}
+ 50%{transform:scale(1.012) translateY(-4px)}
+}
+
+.talking{
+ animation:talk .22s ease-in-out infinite alternate!important;
+}
+
+@keyframes talk{
+ from{transform:scale(1.012) translateY(-3px)}
+ to{transform:scale(1.025) translateY(-7px)}
+}
+
+.wave{
+ animation:wave 1.2s ease-in-out infinite alternate!important;
+}
+
+@keyframes wave{
+ from{transform:rotate(-1deg) scale(1.01)}
+ to{transform:rotate(1deg) scale(1.025)}
+}
+
+.sit{
+ transform:scale(1.08) translateY(3%)!important;
+}
+
+.smile{
+ filter:brightness(1.08) saturate(1.12);
+ transform:scale(1.025);
+}
+
+.controls{
+ position:absolute;
+ bottom:22px;
+ left:50%;
+ transform:translateX(-50%);
+ display:flex;
+ flex-wrap:wrap;
+ justify-content:center;
+ gap:8px;
+ width:94%;
+ z-index:5;
+}
+
+button{
+ border:1px solid #55b8ff;
+ background:rgba(8,28,50,.88);
+ color:white;
+ padding:11px 15px;
+ border-radius:16px;
+ font-size:14px;
+ box-shadow:0 0 12px rgba(70,170,255,.25);
+}
+
+button:active{
+ transform:scale(.94);
 }
 </style>
+</head>
 
-<script type="module">
+<body>
 
-import * as THREE from
-"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+<div id="elan">
 
-import {GLTFLoader} from
-"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
+<img id="elanImage"
+src="elan-fullscreen.png"
+onerror="this.src='elan-avatar.png'">
 
-let scene;
-let camera;
-let renderer;
-let elan;
+<div class="controls">
+<button onclick="stand()">Stand</button>
+<button onclick="sit()">Sit</button>
+<button onclick="talk()">Talk</button>
+<button onclick="wave()">Wave</button>
+<button onclick="smile()">Smile</button>
+</div>
 
-let mixer;
-let actions={};
-let currentAction;
+</div>
 
-let bones={};
-let faceMeshes=[];
+<script>
 
-const canvas=document.getElementById("elanCanvas");
+const img=document.getElementById("elanImage");
 
-scene=new THREE.Scene();
-
-scene.background=new THREE.Color(0x050b14);
-
-camera=new THREE.PerspectiveCamera(
-  35,
-  window.innerWidth/window.innerHeight,
-  0.1,
-  100
-);
-
-camera.position.set(0,1.55,4.2);
-
-renderer=new THREE.WebGLRenderer({
-  canvas:canvas,
-  antialias:true,
-  alpha:true
-});
-
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-
-renderer.setSize(
-  window.innerWidth,
-  window.innerHeight
-);
-
-renderer.outputColorSpace=THREE.SRGBColorSpace;
-
-
-/* LIGHT */
-
-const keyLight=new THREE.DirectionalLight(
-  0xffffff,
-  2.5
-);
-
-keyLight.position.set(2,4,4);
-
-scene.add(keyLight);
-
-
-const fillLight=new THREE.DirectionalLight(
-  0x75bfff,
-  1.5
-);
-
-fillLight.position.set(-3,2,2);
-
-scene.add(fillLight);
-
-
-const ambient=new THREE.AmbientLight(
-  0xffffff,
-  1.2
-);
-
-scene.add(ambient);
-
-
-/* LOAD ELAN MODEL */
-
-const loader=new GLTFLoader();
-
-loader.load(
-  "elan.glb",
-
-  function(gltf){
-
-    elan=gltf.scene;
-
-    scene.add(elan);
-
-    elan.position.set(0,0,0);
-
-    elan.scale.set(
-      1,
-      1,
-      1
-    );
-
-
-    /* FIND BONES + FACE */
-
-    elan.traverse(function(obj){
-
-      if(obj.isBone){
-
-        bones[obj.name.toLowerCase()]=obj;
-
-      }
-
-      if(obj.isMesh){
-
-        obj.castShadow=true;
-
-        obj.receiveShadow=true;
-
-        if(
-          obj.morphTargetDictionary &&
-          obj.morphTargetInfluences
-        ){
-
-          faceMeshes.push(obj);
-
-        }
-
-      }
-
-    });
-
-
-    /* ANIMATIONS */
-
-    mixer=new THREE.AnimationMixer(elan);
-
-    gltf.animations.forEach(function(clip){
-
-      actions[clip.name.toLowerCase()]=
-        mixer.clipAction(clip);
-
-    });
-
-
-    playAnimation("idle");
-
-  },
-
-  undefined,
-
-  function(error){
-
-    console.log(
-      "ELAN model load error:",
-      error
-    );
-
-  }
-);
-
-
-/* ANIMATION PLAYER */
-
-function playAnimation(name){
-
-  if(!mixer)return;
-
-  const action=actions[name.toLowerCase()];
-
-  if(!action)return;
-
-  if(currentAction===action)return;
-
-  if(currentAction){
-
-    currentAction.fadeOut(.25);
-
-  }
-
-  action.reset();
-
-  action.fadeIn(.25);
-
-  action.play();
-
-  currentAction=action;
+function reset(){
+ img.className="";
 }
 
-
-/* STANDING */
-
-window.elanStand=function(){
-
-  playAnimation("stand");
-
-};
-
-
-/* SITTING */
-
-window.elanSit=function(){
-
-  playAnimation("sit");
-
-};
-
-
-/* TALKING */
-
-window.elanTalk=function(){
-
-  playAnimation("talk");
-
-};
-
-
-/* WAVE */
-
-window.elanWave=function(){
-
-  playAnimation("wave");
-
-};
-
-
-/* SMILE */
-
-window.elanSmile=function(){
-
-  setFace("smile",1);
-
-  setTimeout(function(){
-
-    setFace("smile",0);
-
-  },1200);
-
-};
-
-
-/* FACIAL CONTROL */
-
-function setFace(name,value){
-
-  name=name.toLowerCase();
-
-  faceMeshes.forEach(function(mesh){
-
-    const dict=mesh.morphTargetDictionary;
-
-    const influence=mesh.morphTargetInfluences;
-
-    for(const key in dict){
-
-      if(
-        key.toLowerCase().includes(name)
-      ){
-
-        influence[dict[key]]=value;
-
-      }
-
-    }
-
-  });
-
+function stand(){
+ reset();
 }
 
-
-/* NATURAL BLINK */
-
-function blink(){
-
-  setFace("blink",1);
-
-  setTimeout(function(){
-
-    setFace("blink",0);
-
-  },120);
-
+function sit(){
+ reset();
+ img.classList.add("sit");
 }
 
-setInterval(function(){
+function talk(){
+ reset();
+ img.classList.add("talking");
 
-  blink();
-
-},3500);
-
-
-/* NATURAL HEAD MOVEMENT */
-
-function naturalMovement(time){
-
-  if(!elan)return;
-
-  const head=
-    bones["head"] ||
-    bones["head_end"];
-
-  const neck=
-    bones["neck"];
-
-  if(head){
-
-    head.rotation.y=
-      Math.sin(time*0.0007)*0.06;
-
-    head.rotation.x=
-      Math.sin(time*0.0009)*0.025;
-
-  }
-
-  if(neck){
-
-    neck.rotation.y=
-      Math.sin(time*0.0006)*0.025;
-
-  }
-
+ setTimeout(()=>{
+   img.classList.remove("talking");
+ },4000);
 }
 
+function wave(){
+ reset();
+ img.classList.add("wave");
 
-/* UPDATE */
-
-const clock=new THREE.Clock();
-
-function animate(time){
-
-  requestAnimationFrame(animate);
-
-  const delta=clock.getDelta();
-
-  if(mixer){
-
-    mixer.update(delta);
-
-  }
-
-  naturalMovement(time);
-
-  renderer.render(
-    scene,
-    camera
-  );
-
+ setTimeout(()=>{
+   img.classList.remove("wave");
+ },3500);
 }
 
-animate(0);
+function smile(){
+ reset();
+ img.classList.add("smile");
 
+ setTimeout(()=>{
+   img.classList.remove("smile");
+ },1800);
+}
 
-/* RESIZE */
+/* natural idle movement */
 
-window.addEventListener(
-  "resize",
-  function(){
+setInterval(()=>{
+ if(!img.className){
+   img.style.filter=
+     "brightness("+(1+Math.random()*0.025)+")";
+ }
+},1800);
 
-    camera.aspect=
-      window.innerWidth/
-      window.innerHeight;
+</script>
 
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(
-      window.innerWidth,
-      window.innerHeight
-    );
-
-  }
-);
-
- </script>
+</body>
+</html>
